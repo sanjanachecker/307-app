@@ -42,10 +42,24 @@ const findUserByName = (name) => {
 const findUserById = (id) =>
 users["users_list"].find((user) => user["id"] === id);
 
+const findUserByNameJob = (name, job) => {
+    return users["users_list"].filter(
+        (user) => (user["name"] === name) && (user["job"] === job)
+    );
+}
+
 const addUser = (user) => {
     users["users_list"].push(user);
     return user;
 };
+
+const deleteUser = (userId) => {
+    const index = users["users_list"].findIndex(user => user.id === userId);
+    if (index !== -1) {
+        return users["users_list"].splice(index, 1)[0];
+    }
+    return null;
+}
 
 app.use(express.json());
 
@@ -54,8 +68,12 @@ app.get("/", (req, res) => {
 });
 
 app.get("/users", (req, res) => {
-  const name = req.query.name;
-  if (name != undefined) {
+    const {name, job} = req.query;
+    if (name !== undefined && job !== undefined) {
+        let result = findUserByNameJob(name, job);
+        result = { users_list: result };
+        res.send(result);
+    } else if (name != undefined) {
     let result = findUserByName(name);
     result = { users_list: result };
     res.send(result);
@@ -80,9 +98,18 @@ app.post("/users", (req, res) => {
     res.send();
 });
 
+app.delete("/users/:id", (req, res) => {
+    const userId = req.params.id;
+    const delUser = deleteUser(userId);
+    if (delUser) {
+        res.send(delUser)
+    } else {
+        res.status(404).send("User not found");
+    }
+});
+
 app.listen(port, () => {
     console.log(
         `Example app listening at http://localhost:${port}`
     );
 });
-
