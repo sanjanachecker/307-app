@@ -19,10 +19,19 @@ function MyApp() {
   }
   function updateList(person) {
     postUser(person)
-    .then(() => setCharacters([...characters, person]))
+    .then((response) => {
+      if (response.status === 201) {
+        return response.json();
+      } else {
+        throw new Error('Failed, user not added.');
+      }
+    })
+    .then((addedUser) => {
+      setCharacters([...characters, addedUser]);
+    })
     .catch((error) => {
       console.log(error);
-    })
+    });
   }
   function fetchUsers() {
     const promise = fetch("http://localhost:8000/users");
