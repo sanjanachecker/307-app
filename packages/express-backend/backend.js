@@ -110,9 +110,9 @@ app.delete("/users/:id", (req, res) => {
     const userId = req.params.id;
     const delUser = deleteUser(userId);
     if (delUser) {
-        res.send(delUser)
+        res.status(204).send(delUser)
     } else {
-        res.status(404).send("User not found");
+        res.status(404).send("Resource not found");
     }
 });
 

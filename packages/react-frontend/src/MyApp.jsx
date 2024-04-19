@@ -11,11 +11,27 @@ function MyApp() {
     .then((json) => setCharacters(json["users_list"]))
     .catch((error) => { console.log(error); });
   }, [] );
-  function removeOneCharacter(index){
-    const updated = characters.filter((character, i) => {
-      return i !== index
-    });
-    setCharacters(updated)
+  function removeOneCharacter(index) {
+    const userToDelete = characters[index];
+    if (userToDelete) {
+        fetch(`http://localhost:8000/users/${userToDelete.id}`, {
+            method: "DELETE"
+        })
+        .then(response => {
+            if (response.status === 204) {
+                const updatedCharacters = characters.filter((character, i) => i !== index);
+                setCharacters(updatedCharacters);
+            } else if (response.status === 404) {
+                console.error('User not found, could not delete');
+                // Optionally handle user not found in UI, e.g., show a message
+            } else {
+                throw new Error('Failed to delete the user');
+            }
+        })
+        .catch(error => {
+            console.error('Error deleting the user:', error);
+        });
+    }
   }
   function updateList(person) {
     postUser(person)
