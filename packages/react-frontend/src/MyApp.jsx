@@ -22,14 +22,12 @@ function MyApp() {
                 const updatedCharacters = characters.filter((character, i) => i !== index);
                 setCharacters(updatedCharacters);
             } else if (response.status === 404) {
-                console.error('User not found, could not delete');
-                // Optionally handle user not found in UI, e.g., show a message
-            } else {
+                console.error('User not found, could not delete');            } else {
                 throw new Error('Failed to delete the user');
             }
         })
         .catch(error => {
-            console.error('Error deleting the user:', error);
+            console.error('Error deleting the user', error);
         });
     }
   }
